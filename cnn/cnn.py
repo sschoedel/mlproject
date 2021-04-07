@@ -52,3 +52,5 @@ model.compile(optimizer='adam',
 EPOCHS = 1000
 history = model.fit(train_ds, epochs=EPOCHS)
 
+# save the model
+model.save(os.path.join(os.getcwd()), 'trained_model')
