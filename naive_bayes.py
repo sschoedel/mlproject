@@ -1,5 +1,7 @@
 import cv2 as cv
 import numpy as np
+import os
+import time
 
 # take first 10 images to greyscale and get average value 0-255 for each class
 # divide into 4 discrete clasees, 0-64, 65-128, etc..
@@ -45,12 +47,70 @@ import numpy as np
     # for each other class:
         # get the false images (250-255)
     # --- logic here needs to be joined together
+
+
+IMG_SZ = 120
+NUM_GROUPS = 4
+LAPLACE = 1
+
+dir_names = ['Bicycle', 'Bridge', 'Bus', 'Car', 'Chimney', 'Crosswalk', 'Hydrant', 'Motorcycle', 'Mountain', 'Palm', 'Traffic Light']
+train_path = './Train/'
+test_path = './Test/'
+
+res_arr = []
+
+for dir_name in dir_names:    
+    arr = np.zeros((IMG_SZ * IMG_SZ, NUM_GROUPS))
+    # max_files = 50 # remove later
+    num_files = 0
+    for file_name in os.listdir(train_path + dir_name):   
+        img = cv.imread(train_path + dir_name + "/" + file_name, 0)
+        if img.shape[0] != IMG_SZ:
+            continue
+        flattened = img.flatten()
+        flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
+        arr[np.arange(flattened.size), flattened] += 1
+        num_files += 1
+        # if num_files == max_files: # remove later
+          #  break
+    arr = (arr + LAPLACE) / (num_files + (LAPLACE * len(dir_names)))
+    res_arr.append(arr)
+
+res_arr = np.array(res_arr)
+
+
+# ---------- testing below ----------
+
+print("TESTING STARTING ------------------")
+
+dir_i = 0
+correct = 0
+incorrect = 0
+for dir_name in dir_names:    
+    arr = np.zeros((IMG_SZ * IMG_SZ, NUM_GROUPS))
+    for file_name in os.listdir(test_path + dir_name):  
+        img = cv.imread(test_path + dir_name + "/" + file_name, 0)     
+        flattened = img.flatten()
+        flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
+
+        
+        max_num = -999999999
+        max_class = 0
+        for i in range(len(dir_names)):
+            num = np.sum(np.log(res_arr[i][np.arange(flattened.size), flattened]))
+            if num > max_num:
+                max_class = i
+                max_num = num
+        if max_class == dir_i:
+            correct += 1
+        else:
+            incorrect += 1
+
+    dir_i += 1
+
+print("RESULTS: ---------")
+print(correct)
+print(incorrect)
+print(correct / (correct + incorrect))
     
-arr = np.zeros((10000, 4))
-img = cv.imread('./Test/Bicycle Test/Bicycle Test Test 0.png', 0)
-flattened = img.flatten()
-flattened = (flattened / 255 * 4).astype(int)
-encoded =  np.zeros((flattened.size, flattened.max() +1))
-encoded[np.arange(flattened.size), flattened] = 1
-arr += encoded
 
