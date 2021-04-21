@@ -27,14 +27,6 @@ print(trainset)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
                                           shuffle=True, num_workers=0)
 
-def imshow(batch):
-    if batch.ndim == 4:
-        for img in batch:         
-            img = img / 2 + 0.5     # unnormalize
-            npimg = img.numpy()
-            plt.imshow(npimg)
-            plt.show()
-
 import torch.optim as optim
 
 criterion = nn.CrossEntropyLoss()
