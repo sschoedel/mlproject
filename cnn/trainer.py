@@ -9,7 +9,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-from transformations import Rescale, RandomCrop
 
 # set constants
 WORKERS = 0
@@ -92,12 +91,6 @@ for epoch in range(EPOCHS):  # loop over the dataset multiple times
             running_loss = 0.0
 
 print('Finished Training')
-
-# set the directory to save the network
-model_dir = os.path.join(os.getcwd(), 'models')
-i = 0
-while os.path.exists(os.path.join(model_dir, str(i))):
-    i += 1
 
 # save model in the same folder as this script
 model_path = os.path.join(model_dir, 'trained_cnn')
