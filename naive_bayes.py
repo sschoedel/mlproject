@@ -40,9 +40,6 @@ import time
         # [class][pixel][0-64]
 # take the largest of this thing
 
-
-
-
     # get the true images (0-250)
     # for each other class:
         # get the false images (250-255)
@@ -53,64 +50,71 @@ IMG_SZ = 120
 NUM_GROUPS = 4
 LAPLACE = 1
 
-dir_names = ['Bicycle', 'Bridge', 'Bus', 'Car', 'Chimney', 'Crosswalk', 'Hydrant', 'Motorcycle', 'Mountain', 'Palm', 'Traffic Light']
-train_path = './Train/'
-test_path = './Test/'
+TRAIN_PATH = './Train/'
+TEST_PATH = './Test/'
 
-res_arr = []
 
-for dir_name in dir_names:    
-    arr = np.zeros((IMG_SZ * IMG_SZ, NUM_GROUPS))
-    # max_files = 50 # remove later
-    num_files = 0
-    for file_name in os.listdir(train_path + dir_name):   
-        img = cv.imread(train_path + dir_name + "/" + file_name, 0)
-        if img.shape[0] != IMG_SZ:
-            continue
-        flattened = img.flatten()
-        flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
-        arr[np.arange(flattened.size), flattened] += 1
-        num_files += 1
-        # if num_files == max_files: # remove later
-          #  break
-    arr = (arr + LAPLACE) / (num_files + (LAPLACE * len(dir_names)))
-    res_arr.append(arr)
+def train_naive_bayes(classes):  
 
-res_arr = np.array(res_arr)
+    # initialize model
+    model = {}
+    # initialize conditional probability matrix and priors matrix
+    conditionals = []
+    priors = []
+    total_files = 0
+
+    # iterate over every class
+    for dir_name in classes:    
+
+        arr = np.zeros((IMG_SZ * IMG_SZ, NUM_GROUPS))
+        num_files = 0
+
+        # iterate over every image in this class
+        for file_name in os.listdir(TRAIN_PATH + dir_name):   
+            img = cv.imread(TRAIN_PATH + dir_name + "/" + file_name, 0)
+
+            # skip over the image if it is not if size 120x120 (rare)
+            if img.shape[0] != IMG_SZ:
+                continue
+
+            flattened = img.flatten()
+            flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
+            arr[np.arange(flattened.size), flattened] += 1
+            num_files += 1
+
+        # apply Laplace smoothing
+        arr = (arr + LAPLACE) / (num_files + (LAPLACE * len(classes)))
+        conditionals.append(arr)
+        priors.append(num_files)
+        total_files += num_files
+
+    # save results to returned model
+    conditionals = np.array(conditionals)
+    priors = np.array(priors)
+    priors = priors / total_files
+    model['conditionals'] = conditionals
+    model['priors'] = priors
+
+    return model
 
 
 # ---------- testing below ----------
 
-print("TESTING STARTING ------------------")
+def test_naive_bayes(model, classes, img_path, dir_i): 
+    # read and flatten image
+    img = cv.imread(img_path, 0)     
+    flattened = img.flatten()
+    flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
 
-dir_i = 0
-correct = 0
-incorrect = 0
-for dir_name in dir_names:    
-    arr = np.zeros((IMG_SZ * IMG_SZ, NUM_GROUPS))
-    for file_name in os.listdir(test_path + dir_name):  
-        img = cv.imread(test_path + dir_name + "/" + file_name, 0)     
-        flattened = img.flatten()
-        flattened = (flattened / 255 * (NUM_GROUPS - 1)).astype(int)
-
-        
-        max_num = -999999999
-        max_class = 0
-        for i in range(len(dir_names)):
-            num = np.sum(np.log(res_arr[i][np.arange(flattened.size), flattened]))
-            if num > max_num:
-                max_class = i
-                max_num = num
-        if max_class == dir_i:
-            correct += 1
-        else:
-            incorrect += 1
-
-    dir_i += 1
-
-print("RESULTS: ---------")
-print(correct)
-print(incorrect)
-print(correct / (correct + incorrect))
+    max_num = -999999999
+    max_class = 0
+    # calculate the predicted class
+    for i in range(len(classes)):
+        num = np.sum(np.log(model['conditionals'][i][np.arange(flattened.size), flattened]))
+        num += np.log(model['priors'][dir_i])
+        if num > max_num:
+            max_class = i
+            max_num = num
+    return max_class
     
 
