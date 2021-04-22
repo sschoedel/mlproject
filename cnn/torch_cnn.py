@@ -19,7 +19,8 @@ class Net(nn.Module):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
         # first argument should be batch size, and -1 will let pytorch figure out other dimensions
-        x = x.view(4, -1)
+        # second argument should match number of input channels to first linear layer
+        x = x.view(-1, 7744)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
