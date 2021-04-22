@@ -8,12 +8,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-
 from transformations import Rescale, RandomCrop
 
 # set constants
 WORKERS = 0
-EPOCHS = 2
+EPOCHS = 10
+BATCH_SIZE = 4
 
 # train on GPU, if available
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
@@ -21,7 +21,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # Assuming that we are on a CUDA machine, this should print a CUDA device:
 print(device)
 
-batch_size = 4
+net = Net()
+print(net)
+
+# specify what transformations to apply on each image
 transform = transforms.Compose([
     # you can add other transformations in this list
     transforms.ToTensor(),
@@ -30,16 +33,14 @@ transform = transforms.Compose([
     #RandomCrop(100)
 ])
 
-net = Net()
-print(net)
-
+# load the datasets
 trainset = datasets.ImageFolder(os.path.join(os.getcwd(), '..', 'Train'), transform=transform)
 print(trainset)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=batch_size,
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
                                           shuffle=True, num_workers=WORKERS)
 
 testset = datasets.ImageFolder(os.path.join(os.getcwd(), '..', 'Test'), transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
+testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
                                           shuffle=True, num_workers=WORKERS)
 
 # set loss and optimizer functions
@@ -77,8 +78,14 @@ for epoch in range(EPOCHS):  # loop over the dataset multiple times
 
 print('Finished Training')
 
+# set the directory to save the network
+model_dir = os.path.join(os.getcwd(), 'models')
+i = 0
+while os.path.exists(os.path.join(model_dir, str(i))):
+    i += 1
+
 # save model in the same folder as this script
-model_path = os.path.join(os.getcwd(), 'trained_cnn')
+model_path = os.path.join(model_dir, i, 'trained_cnn')
 torch.save(net, model_path)
 print(f'Saving model as {model_path}')
 
