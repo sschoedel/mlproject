@@ -23,7 +23,10 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 print(device)
 
 net = ResNet()
+#net = Net()
 print(net)
+# uncomment if training on a gpu
+#net.to(device)
 
 # specify what transformations to apply on each image
 transform = transforms.Compose([
@@ -49,7 +52,7 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
 criterion = nn.CrossEntropyLoss()
 optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
 
-PRINT_INTERVAL = 1000
+PRINT_INTERVAL = 100
 
 model_dir = os.path.join(os.getcwd(), 'models')
 i = 0
@@ -59,37 +62,57 @@ model_dir = os.path.join(model_dir, str(i))
 
 # create a tensorboard log
 writer = SummaryWriter(model_dir)
+print(f'training model number {i}')
+
+# start the best loss as a very large number
+best_loss = 9999
+tolerance = 0.1
 
 for epoch in range(EPOCHS):  # loop over the dataset multiple times
 
-    running_loss = 0.0
-    for i, data in enumerate(trainloader, 0):
-        # get the inputs; data is a list of [inputs, labels]
-        inputs, labels = data
-        # replace the line above with this line if training on a gpu:
-        #inputs, labels = data.to(device)
+    for phase in ['train', 'val']:
+        running_loss = 0.0
+        if phase == 'train': 
+            # set model to training mode
+            net.train(True)
+        else:
+            net.train(False)
 
+        for i, data in enumerate(dataloaders[phase], 0):
+            # get the inputs; data is a list of [inputs, labels]
+            inputs, labels = data
+            # send the inputs to the gpu
+            #inputs, labels = data[0].to(device), data[1].to(device)
 
-        # zero the parameter gradients
-        optimizer.zero_grad()
+            # zero the parameter gradients
+            optimizer.zero_grad()
 
-        # forward + backward + optimize
-        outputs = net(inputs)
-        loss = criterion(outputs, labels)
-        loss.backward()
-        optimizer.step()
+            # forward + backward + optimize
+            outputs = net(inputs)
+            loss = criterion(outputs, labels)
 
-        # print statistics
-        running_loss += loss.item()
-        if i % PRINT_INTERVAL == PRINT_INTERVAL-1:    # print every 1000 mini-batches
-            # ...log the running loss
-            writer.add_scalar('training loss',
-                            running_loss / PRINT_INTERVAL,
-                            epoch * len(trainloader) + i)
+            # only update the weights in training, not validation
+            if phase == 'train':         
+                loss.backward()
+                optimizer.step()
 
-            print('[%d, %5d] loss: %.3f' %
-                  (epoch + 1, i + 1, running_loss / PRINT_INTERVAL))
-            running_loss = 0.0
+            # print statistics
+            running_loss += loss.item()
+            if i % PRINT_INTERVAL == PRINT_INTERVAL-1:    # print every 1000 mini-batches
+                # ...log the running loss
+                writer.add_scalar(f'{phase} loss',
+                                running_loss / PRINT_INTERVAL,
+                                epoch * len(dataloaders[phase]) + i)
+
+                print(f'[{epoch+1}, {i+1}] {phase} loss: {running_loss/PRINT_INTERVAL:0.3f}')
+
+                # save new best model if validation loss decreases 
+                if phase == 'val' and running_loss/PRINT_INTERVAL < (best_loss - tolerance):
+                    torch.save(net, os.path.join(model_dir, 'best_cnn'))
+                    print(f'saving new best model with val loss {running_loss/PRINT_INTERVAL}')
+                    best_loss = running_loss/PRINT_INTERVAL
+
+                running_loss = 0.0
 
 print('Finished Training')
 
@@ -98,15 +121,37 @@ model_path = os.path.join(model_dir, 'trained_cnn')
 torch.save(net, model_path)
 print(f'Saving model as {model_path}')
 
-# test the model
+best_model = torch.load(os.path.join(model_dir, 'best_cnn'))
+best_model.eval()
+
+# test the best model
 correct = 0
 total = 0
+print('testing model')
 with torch.no_grad():
     for data in testloader:
-        images, labels = data
-        outputs = net(images)
+        images, labels = data[0].to(device), data[1].to(device)
+        outputs = best_model(images)
         _, predicted = torch.max(outputs.data, 1)
         total += labels.size(0)
         correct += (predicted == labels).sum().item()
 
-print(f'Accuracy of the network on the test images: {100*correct/total}')
+print(f'Accuracy of the best network on the test images: {100*correct/total}')
+
+# test the final model
+final_model = torch.load(os.path.join(model_dir, 'trained_cnn'))
+final_model.eval()
+
+correct = 0
+total = 0
+print('testing model')
+with torch.no_grad():
+    for data in testloader:
+        images, labels = data[0].to(device), data[1].to(device)
+        outputs = final_model(images)
+        _, predicted = torch.max(outputs.data, 1)
+        total += labels.size(0)
+        correct += (predicted == labels).sum().item()
+
+print(f'Accuracy of the final network on the test images: {100*correct/total}')
+
