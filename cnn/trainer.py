@@ -1,4 +1,5 @@
 from torch_cnn import Net
+from res_cnn import ResNet
 import torch
 from torchvision import datasets, transforms
 from torch.utils.tensorboard import SummaryWriter
@@ -21,7 +22,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 # Assuming that we are on a CUDA machine, this should print a CUDA device:
 print(device)
 
-net = Net()
+net = ResNet()
 print(net)
 
 # specify what transformations to apply on each image
