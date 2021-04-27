@@ -1,5 +1,4 @@
-from torch_cnn import Net
-from res_cnn import ResNet
+from cnn.res_cnn import ResNet
 import torch
 from torchvision import datasets, transforms
 from torch.utils.tensorboard import SummaryWriter
@@ -37,121 +36,25 @@ transform = transforms.Compose([
     #RandomCrop(100)
 ])
 
-# load the datasets
-trainset = datasets.ImageFolder(os.path.join(os.getcwd(), '..', 'Train'), transform=transform)
-print(trainset)
-trainloader = torch.utils.data.DataLoader(trainset, batch_size=BATCH_SIZE,
-                                          shuffle=True, num_workers=WORKERS)
+model_dir = os.path.join(os.getcwd(), 'cnn')
 
-testset = datasets.ImageFolder(os.path.join(os.getcwd(), '..', 'Test'), transform=transform)
-testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
-                                          shuffle=True, num_workers=WORKERS)
 
-# set loss and optimizer functions
-# use crossentropyloss for multi-class classification
-criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(net.parameters(), lr=0.001, momentum=0.9)
-
-PRINT_INTERVAL = 100
-
-model_dir = os.path.join(os.getcwd(), 'models')
-i = 0
-while os.path.exists(os.path.join(model_dir, str(i))):
-    i += 1
-model_dir = os.path.join(model_dir, str(i))
-
-# create a tensorboard log
-writer = SummaryWriter(model_dir)
-print(f'training model number {i}')
-
-# start the best loss as a very large number
-best_loss = 9999
-tolerance = 0.1
-
-for epoch in range(EPOCHS):  # loop over the dataset multiple times
-
-    for phase in ['train', 'val']:
-        running_loss = 0.0
-        if phase == 'train': 
-            # set model to training mode
-            net.train(True)
-        else:
-            net.train(False)
-
-        for i, data in enumerate(dataloaders[phase], 0):
-            # get the inputs; data is a list of [inputs, labels]
-            inputs, labels = data
-            # send the inputs to the gpu
-            #inputs, labels = data[0].to(device), data[1].to(device)
-
-            # zero the parameter gradients
-            optimizer.zero_grad()
-
-            # forward + backward + optimize
-            outputs = net(inputs)
-            loss = criterion(outputs, labels)
-
-            # only update the weights in training, not validation
-            if phase == 'train':         
-                loss.backward()
-                optimizer.step()
-
-            # print statistics
-            running_loss += loss.item()
-            if i % PRINT_INTERVAL == PRINT_INTERVAL-1:    # print every 1000 mini-batches
-                # ...log the running loss
-                writer.add_scalar(f'{phase} loss',
-                                running_loss / PRINT_INTERVAL,
-                                epoch * len(dataloaders[phase]) + i)
-
-                print(f'[{epoch+1}, {i+1}] {phase} loss: {running_loss/PRINT_INTERVAL:0.3f}')
-
-                # save new best model if validation loss decreases 
-                if phase == 'val' and running_loss/PRINT_INTERVAL < (best_loss - tolerance):
-                    torch.save(net, os.path.join(model_dir, 'best_cnn'))
-                    print(f'saving new best model with val loss {running_loss/PRINT_INTERVAL}')
-                    best_loss = running_loss/PRINT_INTERVAL
-
-                running_loss = 0.0
-
-print('Finished Training')
-
-# save model in the same folder as this script
-model_path = os.path.join(model_dir, 'trained_cnn')
-torch.save(net, model_path)
-print(f'Saving model as {model_path}')
-
-best_model = torch.load(os.path.join(model_dir, 'best_cnn'))
-best_model.eval()
-
-# test the best model
-correct = 0
-total = 0
-print('testing model')
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data[0].to(device), data[1].to(device)
-        outputs = best_model(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-print(f'Accuracy of the best network on the test images: {100*correct/total}')
-
-# test the final model
-final_model = torch.load(os.path.join(model_dir, 'trained_cnn'))
-final_model.eval()
-
-correct = 0
-total = 0
-print('testing model')
-with torch.no_grad():
-    for data in testloader:
-        images, labels = data[0].to(device), data[1].to(device)
-        outputs = final_model(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-print(f'Accuracy of the final network on the test images: {100*correct/total}')
+def test_cnn():
+    # test the final model
+    testset = datasets.ImageFolder(os.path.join(os.getcwd(), '', 'Test'), transform=transform)
+    testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
+                                            shuffle=True, num_workers=WORKERS)
+    final_model = ResNet()
+    final_model.load_state_dict(torch.load(os.path.join(model_dir, 'trained_cnn.zip')))
+    final_model.eval()
+    
+    predictions = np.array([])
+    with torch.no_grad():
+        for data in testloader:
+            #images, labels = data[0].to(device), data[1].to(device)
+            images, labels = data
+            outputs = final_model(images)
+            _, predicted = torch.max(outputs.data, 1)
+            np.concatenate(predictions, predicted)
+    return predictions
 
