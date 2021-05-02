@@ -63,19 +63,21 @@ def main(argv):
         print(classification_report(test_images_truth, predictions, digits=3))
 
     '''
-
     print("======= Running CNN ========")
+
 
     #print("-- begin training CNN --")
     #naive_bayes_model = train_naive_bayes(classes)
 
-    print("-- Begin testing CNN--")
-    predictions = test_cnn()
+   '''
 
+
+    print("-- Begin testing CNN--")
+    labels, predictions = test_cnn()
+    
     # Output results of Naive Bayes
     print("CNN Report:")
-    print(classification_report(test_images_truth, predictions, digits=3))
-    '''
+    print(classification_report(labels, predictions, digits=3))
 
 
     
