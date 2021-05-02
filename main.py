@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import mlp.mlptorch as mlp
 from naive_bayes import train_naive_bayes, test_naive_bayes
 from sklearn.metrics import classification_report
 import sys, getopt
@@ -13,6 +14,7 @@ def main(argv):
 
     # option flags
     train_cnn_flag = False
+    train_mlp_flag = False
 
     # read in command args
     try:
@@ -27,6 +29,8 @@ def main(argv):
             sys.exit()
         elif opt == "-c":
             train_cnn_flag = True
+        elif opt == "-m":
+            train_mlp_flag = True
 
     test_images_truth = []
     # traverse the test image directories to get the ground truth
@@ -63,6 +67,12 @@ def main(argv):
     print(classification_report(test_images_truth, predictions, digits=3))
 
     
+    if train_mlp_flag:
+        print("-- begin training MLP --")
+        mlp.train_mlp()
+    
+    print(" -- begin testing MLP --")
+    test_image_predictions = mlp.test_mlp()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
