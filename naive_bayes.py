@@ -54,7 +54,9 @@ TRAIN_PATH = './Train/'
 TEST_PATH = './Test/'
 
 
-def train_naive_bayes(classes):  
+def train_naive_bayes(classes, num):  
+
+    NUM_GROUPS = num
 
     # initialize model
     model = {}
@@ -100,7 +102,9 @@ def train_naive_bayes(classes):
 
 # ---------- testing below ----------
 
-def test_naive_bayes(model, classes, img_path, dir_i): 
+def test_naive_bayes(model, classes, img_path, dir_i, num): 
+
+    NUM_GROUPS = num
     # read and flatten image
     img = cv.imread(img_path, 0)     
     flattened = img.flatten()
