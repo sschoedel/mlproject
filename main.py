@@ -2,7 +2,7 @@ import numpy as np
 import os
 import mlp.mlptorch as mlp
 from naive_bayes import train_naive_bayes, test_naive_bayes
-from cnn.trainer import test_cnn
+from cnn.tester import test_cnn
 from sklearn.metrics import classification_report
 import sys, getopt
 from cnn.res_cnn import ResNet
