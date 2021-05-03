@@ -390,7 +390,7 @@ class MLP_Scratch:
 				params['lambda'] = lambda_vals[k]
 				
 				# Cross validate with given structure and lambda values
-				cv_score, models = cross_validate(mlp_train, mlp_predict, train_data, train_labels, num_folds, params)
+				cv_score, models = cross_validate(mlp_train, mlp_predict, self.train_data, self.train_labels, num_folds, params)
 
 				# Update params if best score
 				if cv_score > best_score:
