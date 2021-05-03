@@ -12,13 +12,13 @@ from tqdm import tqdm
 
 
 class MLP_Scratch:
-	self.train_data = 0
-	self.test_data = 0
-	self.train_labels = 0
-	self.test_labels = 0
- 
-	self.cur_model = 0
-	self.final_params = 0
+	train_data = 0
+	test_data = 0
+	train_labels = 0
+	test_labels = 0
+
+	cur_model = 0
+	final_params = 0
  
 	def __init__(self, dir_names_):
 		self.dir_names = ['Bicycle', 'Bridge', 'Bus', 'Car', 'Crosswalk', 'Hydrant', 'Palm', 'Traffic Light']
