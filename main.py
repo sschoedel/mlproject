@@ -1,8 +1,8 @@
 import numpy as np
 import os
-import mlp.mlptorch as mlp
 from naive_bayes import train_naive_bayes, test_naive_bayes
 from cnn.tester import test_cnn
+from mlp.tester import Test_MLP
 from sklearn.metrics import classification_report
 import sys, getopt
 from cnn.res_cnn import ResNet
@@ -84,6 +84,7 @@ def main(argv):
     print(classification_report(labels, predictions, digits=3))
 
 
+    mlp = Test_MLP()
     
     if train_mlp_flag:
         print("-- begin training MLP --")

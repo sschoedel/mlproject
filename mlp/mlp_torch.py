@@ -14,8 +14,6 @@ from tqdm import tqdm
 import csv
 
 
-# MLPs to test
-
 class MLP(nn.Module):
   def __init__(self, layers_):
 	super().__init__()
@@ -25,7 +23,7 @@ class MLP(nn.Module):
 	return self.layers(x)
 
 
-class MLP_Torch:
+class Test_MLP:
 	self.cur_model = 0
 	self.final_params = 0
  
