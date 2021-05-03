@@ -3,6 +3,8 @@ import os
 import torch
 from cnn.res_cnn import ResNet
 import numpy as np
+from tqdm import tqdm
+
 
 def test_cnn():
 
@@ -32,12 +34,19 @@ def test_cnn():
     ground_truth = []
     predictions = []
     with torch.no_grad():
-        for data in testloader:
-            #images, labels = data[0].to(device), data[1].to(device)
-            images, labels = data
-            ground_truth.extend(labels.tolist())
-            outputs = final_model(images)
-            _, predicted = torch.max(outputs.data, 1)
-            predictions.extend(predicted)
+        with tqdm(total=len(testloader), desc="Testing...") as progress_bar:
+
+            for data in testloader:
+                #images, labels = data[0].to(device), data[1].to(device)
+                images, labels = data
+                ground_truth.extend(labels.tolist())
+                outputs = final_model(images)
+                _, predicted = torch.max(outputs.data, 1)
+                predictions.extend(predicted)
+
+                progress_bar.update(1)
+            
+            progress_bar.close()
+            print('CNN Testing Complete!')
 
     return ground_truth, predictions
