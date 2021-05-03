@@ -29,15 +29,15 @@ def main(argv):
     for opt, arg in opts:
         if opt == "-h":
             print("-h\tHelp")
-            print("-c\tTrain CNN (takes a few hours)")
             print("-m\tTrain MLP (takes a few hours)")
+            print("-c\tTrain CNN (takes a few hours)")
             sys.exit()
-        elif opt == "-c":
-            train_cnn_flag = True
-        elif opt == "-m":
-            train_mlp_flag = True
         elif opt == "-n":
             train_nb_flag = True
+        elif opt == "-m":
+            train_mlp_flag = True
+        elif opt == "-c":
+            train_cnn_flag = True
 
     test_images_truth = []
     # traverse the test image directories to get the ground truth
