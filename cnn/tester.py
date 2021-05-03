@@ -14,7 +14,7 @@ def test_cnn(model_path=None):
         final_model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'cnn', 'trained_cnn'), map_location=torch.device('cpu')))
     else:
         # if model path is specified, load that model instead
-        final_model.load_state_dict(torch.load(model_path), map_location=torch.device('cpu')))
+        final_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     
     final_model.eval()
     
