@@ -9,6 +9,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
+from tqdm import tqdm
+
 
 def train_cnn():
     # set constants
@@ -27,7 +29,7 @@ def train_cnn():
     #net = Net()
     print(net)
     # uncomment if training on a gpu
-    #net.to(device)
+    net.to(device)
 
     # specify what transformations to apply on each image
     transform = transforms.Compose([
@@ -63,7 +65,6 @@ def train_cnn():
     while os.path.exists(os.path.join(model_dir, str(i))):
         i += 1
     model_dir = os.path.join(model_dir, str(i))
-    model_path = os.path.join(model_dir, 'trained_cnn')
 
     # create a tensorboard log
     writer = SummaryWriter(model_dir)
@@ -122,7 +123,7 @@ def train_cnn():
     print('Finished Training')
 
     # save final model in the same folder as this script
-    model_path = os.path.join(model_dir, 'trained_cnn')
+    model_path = os.path.join(model_dir, 'trained_cnn.pth')
     torch.save(net, model_path)
     print(f'Saving model as {model_path}')
 
