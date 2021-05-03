@@ -66,14 +66,8 @@ def main(argv):
         print("Naive Bayes Report:")
         print(classification_report(test_images_truth, predictions, digits=3))
 
-    '''
-    print("======= Running CNN ========")
-
-
-    #print("-- begin training CNN --")
-    #naive_bayes_model = train_naive_bayes(classes)
-
-   '''
+    if train_cnn_flag:
+        print("-- Begin training CNN --")
 
 
     print("-- Begin testing CNN--")
