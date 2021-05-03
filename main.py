@@ -72,13 +72,17 @@ def main(argv):
             print(classification_report(test_images_truth, predictions, digits=3))
 
     if train_cnn_flag:
+        # train and test a new model
         print("-- Begin training CNN --")
-        train_cnn()
+        cnn_path = train_cnn()
 
-    print("-- Begin testing CNN--")
-    labels, predictions = test_cnn()
+        print("-- Begin testing CNN--")
+        labels, predictions = test_cnn(model_path=cnn_path)
+    else:
+        # if training was not run, use the default model
+        labels, predictions = test_cnn()    
     
-    # Output results of Naive Bayes
+    # Output results of CNN
     print("CNN Report:")
     print(classification_report(labels, predictions, digits=3))
 

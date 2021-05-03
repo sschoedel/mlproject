@@ -6,10 +6,18 @@ import numpy as np
 from tqdm import tqdm
 
 
-def test_cnn():
+def test_cnn(model_path=None):
 
-    # specify which model to test
-    model_dir = os.path.join(os.getcwd(), 'cnn')
+    final_model = ResNet()
+    if model_path is None:
+        # load the default trained model
+        final_model.load_state_dict(torch.load(os.path.join(os.getcwd(), 'cnn', 'trained_cnn'), map_location=torch.device('cpu')))
+    else:
+        # if model path is specified, load that model instead
+        final_model.load_state_dict(torch.load(model_path), map_location=torch.device('cpu')))
+    
+    final_model.eval()
+    
 
     # specify hyperparams
     BATCH_SIZE = 4
@@ -26,10 +34,6 @@ def test_cnn():
     testset = datasets.ImageFolder(os.path.join(os.getcwd(), 'Test'), transform=transform)
     testloader = torch.utils.data.DataLoader(testset, batch_size=BATCH_SIZE,
                                             shuffle=True, num_workers=WORKERS)
-    final_model = ResNet()
-    final_model.load_state_dict(torch.load(os.path.join(model_dir, 'trained_cnn'), map_location=torch.device('cpu')))
-    #final_model = torch.load(os.path.join(model_dir, 'trained_cnn'), map_location=torch.device('cpu'))
-    final_model.eval()
     
     ground_truth = []
     predictions = []

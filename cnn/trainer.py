@@ -125,3 +125,5 @@ def train_cnn():
     model_path = os.path.join(model_dir, 'trained_cnn')
     torch.save(net, model_path)
     print(f'Saving model as {model_path}')
+
+    return model_path
