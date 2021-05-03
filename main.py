@@ -87,11 +87,13 @@ def main(argv):
     mlp = Test_MLP()
     
     if train_mlp_flag:
-        print("-- begin training MLP --")
-        mlp.train_mlp()
-    
-    print(" -- begin testing MLP --")
-    test_image_predictions = mlp.test_mlp()
+        print("-- Begin training MLP --")
+        mlp.find_optimal_model()
+        print("-- Begin testing MLP --")
+        mlp.print_classification_report()
+    else:
+        print("-- Begin testing with pre-trained MLP model --")
+        mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
 
 if __name__ == "__main__":
     main(sys.argv[1:])
