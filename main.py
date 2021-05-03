@@ -2,7 +2,7 @@ import numpy as np
 import os
 from naive_bayes import train_naive_bayes, test_naive_bayes
 from cnn.tester import test_cnn
-from mlp.tester import Test_MLP
+# from mlp.tester import Test_MLP
 from sklearn.metrics import classification_report
 import sys, getopt
 from cnn.res_cnn import ResNet
@@ -20,14 +20,15 @@ def main(argv):
 
     # read in command args
     try:
-        opts, args = getopt.getopt(argv, "hc")
+        opts, args = getopt.getopt(argv, "hcm")
     except getopt.GetoptError:
       print("main.py -h for help")
       sys.exit(2)
     for opt, arg in opts:
         if opt == "-h":
             print("-h\tHelp")
-            print("-c\tTrain CNN (takes a couple hours)")
+            print("-c\tTrain CNN (takes a few hours)")
+            print("-m\tTrain MLP (takes a few hours)")
             sys.exit()
         elif opt == "-c":
             train_cnn_flag = True
@@ -79,12 +80,13 @@ def main(argv):
 
 
     mlp = Test_MLP()
-    
+    mlp.load_data()
+
     if train_mlp_flag:
         print("-- Begin training MLP --")
-        mlp.find_optimal_model()
+        best_mlp = mlp.find_optimal_model()
         print("-- Begin testing MLP --")
-        mlp.print_classification_report()
+        mlp.print_classification_report(mlp=best_mlp)
     else:
         print("-- Begin testing with pre-trained MLP model --")
         mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
