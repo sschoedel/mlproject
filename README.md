@@ -57,10 +57,14 @@ The dataset used for this project was pulled from the following Git repository:
 https://github.com/deathlyface/recaptcha-dataset
 ```
 
-This dataset contains thousands of images for 11 different reCAPTCHA classes. The classes `Chimney`, `Motorcycle`, and `Mountain` all contained fewer than 100 images, so we elected to remove them from the dataset. The 8 remaining classes were split into a training and testing dataset were split with the ratio 70/30, and stored in this repository within the directories `Train` and `Test`.
+This dataset contains thousands of images for 11 different reCAPTCHA classes. The classes `Chimney`, `Motorcycle`, and `Mountain` all contained fewer than 100 images, so we elected to remove them from the dataset. The 8 remaining classes were split into 70% training images and 30% testing images and stored in this repository within the directories `Train` and `Test`.
 
 ## Contributing
 
 ### Paolo Fermin
 
 Paolo was primarily responsible for the design and training of the Convolutional Neural Network. This includes presenting his model during the class presentation, and completing that portion of the final report. In addition, Paolo wrote the README documentation in the repository. 
+
+### Sam Schoedel
+
+Sam was responsible for designing and training the multi-layer perceptron as well as laying out and editing the report. Responsibilities included presenting MLP results in the class presentation and writing the MLP portion of the report as well as summarizing the results in the conclusion.
