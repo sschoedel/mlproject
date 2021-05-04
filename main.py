@@ -32,13 +32,13 @@ def main(argv):
       sys.exit(2)
     for opt, arg in opts:
         if opt == "-h":
-            print("-h\tHelp")
-            print("-a\tRun all models (default)")
-            print("-n\tRun only Naive Bayes")
-            print("-c\tRun only CNN")
-            print("-m\tRun only MLP")
-            print("-C\tRun with train CNN (takes a few hours)")
-            print("-M\tRun with train MLP (takes a few hours)")
+            print("    -h\tHelp")
+            print("    -a\tRun all models (default)")
+            print("    -n\tRun only Naive Bayes")
+            print("    -c\tRun only CNN")
+            print("    -m\tRun only MLP")
+            print("    -C\tRun with train CNN (takes a few hours)")
+            print("    -M\tRun with train MLP (takes a few hours)")
             sys.exit()
         elif opt == "-C":
             train_cnn_flag = True
@@ -70,6 +70,7 @@ def main(argv):
         run_cnn(train_cnn_flag)
 
 def run_naive_bayes():
+    print("======= Running Naive Bayes ========")
     test_images_truth = []
     # traverse the test image directories to get the ground truth
     dir_i = 0
@@ -79,8 +80,6 @@ def run_naive_bayes():
         dir_i += 1
     test_images_truth = np.array(test_images_truth)
     possible_num_groups = [1, 2, 4, 8, 16, 32, 64, 128, 256]
-
-    print("======= Running Naive Bayes ========")
     start_time_nb = time.time()
     print("-- Begin training NB --")
     naive_bayes_model = train_naive_bayes(classes, 128)
@@ -108,6 +107,7 @@ def run_naive_bayes():
     print("Naive Bayes testing time: " + str(run_time_nb) + " seconds")
 
 def run_mlp(train_mlp_flag):
+    print("======= Running MLP ========")
     mlp = Test_MLP()
     mlp.load_data()
 
@@ -121,6 +121,7 @@ def run_mlp(train_mlp_flag):
         mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
 
 def run_cnn(train_cnn_flag):  
+    print("======= Running CNN ========")
     if train_cnn_flag:
         # train and test a new model
         print("-- Begin training CNN --")
@@ -129,6 +130,7 @@ def run_cnn(train_cnn_flag):
         print("-- Begin testing CNN--")
         labels, predictions = test_cnn(model_path=cnn_path)
     else:
+        print("-- Begin testing with pre-trained CNN model --")
         # if training was not run, use the default model
         labels, predictions = test_cnn()    
     
