@@ -32,13 +32,13 @@ def main(argv):
       sys.exit(2)
     for opt, arg in opts:
         if opt == "-h":
-            print("-h\tHelp")
-            print("-a\tRun all models (default)")
-            print("-n\tRun only Naive Bayes")
-            print("-c\tRun only CNN")
-            print("-m\tRun only MLP")
-            print("-C\tRun with train CNN (takes a few hours)")
-            print("-M\tRun with train MLP (takes a few hours)")
+            print("    -h\tHelp")
+            print("    -a\tRun all models (default)")
+            print("    -n\tRun only Naive Bayes")
+            print("    -c\tRun only CNN")
+            print("    -m\tRun only MLP")
+            print("    -C\tRun with train CNN (takes a few hours)")
+            print("    -M\tRun with train MLP (takes a few hours)")
             sys.exit()
         elif opt == "-C":
             train_cnn_flag = True
