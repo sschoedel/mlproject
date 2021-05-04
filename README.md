@@ -63,7 +63,7 @@ This dataset contains thousands of images for 11 different reCAPTCHA classes. Th
 
 ### Nathan Moeliono
 
-Nathan was primarily responsible for the design and training of the Naive Bayes algorithm. This includes presenting his model during the class presentation, and completing that portion of the final report. In addition, Nathan designed and structured the final presentation. 
+Nathan designed and trained the Naive Bayes algorithm as well as presented it during the presentation and in the final report. Nathan also designed and structured the final presentation. 
 
 ### Paolo Fermin
 
@@ -71,4 +71,4 @@ Paolo was primarily responsible for the design and training of the Convolutional
 
 ### Sam Schoedel
 
-Sam was responsible for designing and training the multi-layer perceptron as well as laying out and editing the report. Responsibilities also included presenting MLP results in the class presentation and writing the MLP portion of the report as well as summarizing the results in the conclusion.
+Sam was responsible for designing and training the multi-layer perceptron as well as laying out and editing the report. Responsibilities included presenting MLP results in the class presentation and writing the MLP portion of the report as well as summarizing the results in the conclusion.
