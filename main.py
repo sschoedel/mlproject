@@ -111,6 +111,20 @@ def main(argv):
             print("Naive Bayes Report:")
             print(classification_report(test_images_truth, predictions, digits=3))
 
+
+    mlp = Test_MLP()
+    mlp.load_data()
+
+    if train_mlp_flag:
+        print("-- Begin training MLP --")
+        best_mlp = mlp.find_optimal_model()
+        print("-- Begin testing MLP --")
+        mlp.print_classification_report(mlp=best_mlp)
+    else:
+        print("-- Begin testing with pre-trained MLP model --")
+        mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
+        
+
     if train_cnn_flag:
         # train and test a new model
         print("-- Begin training CNN --")
@@ -125,19 +139,6 @@ def main(argv):
     # Output results of CNN
     print("CNN Report:")
     print(classification_report(labels, predictions, digits=3))
-
-
-    mlp = Test_MLP()
-    mlp.load_data()
-
-    if train_mlp_flag:
-        print("-- Begin training MLP --")
-        best_mlp = mlp.find_optimal_model()
-        print("-- Begin testing MLP --")
-        mlp.print_classification_report(mlp=best_mlp)
-    else:
-        print("-- Begin testing with pre-trained MLP model --")
-        mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
 
 if __name__ == "__main__":
     main(sys.argv[1:])
