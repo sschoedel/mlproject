@@ -17,6 +17,7 @@ TEST_PATH = './Test/'
 
 def main(argv):
     # option flags
+    run_all_flag = False
     run_only_cnn_flag = False
     run_only_naive_bayes_flag = False
     run_only_mlp_flag = False
@@ -32,6 +33,7 @@ def main(argv):
     for opt, arg in opts:
         if opt == "-h":
             print("-h\tHelp")
+            print("-a\tRun all models (default)")
             print("-n\tRun only Naive Bayes")
             print("-c\tRun only CNN")
             print("-m\tRun only MLP")
@@ -42,20 +44,27 @@ def main(argv):
             train_cnn_flag = True
         elif opt == "-M":
             train_mlp_flag = True
+        elif opt == "-a":
+            run_all_flag = True
         elif opt == "-n":
             run_only_naive_bayes_flag = True
         elif opt == "-c":
             run_only_cnn_flag = True
         elif opt == "-m":
             run_only_mlp_flag = True
-
-    if run_only_naive_bayes_flag:
+    
+    # run specified models
+    if run_all_flag:
+        run_naive_bayes()
+        run_mlp(train_mlp_flag)
+        run_cnn(train_cnn_flag)
+    elif run_only_naive_bayes_flag:
         run_naive_bayes()
     elif run_only_mlp_flag:
         run_mlp(train_mlp_flag)
     elif run_only_cnn_flag:
         run_cnn(train_cnn_flag)
-    else:
+    else:   
         run_naive_bayes()
         run_mlp(train_mlp_flag)
         run_cnn(train_cnn_flag)
