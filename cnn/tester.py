@@ -8,7 +8,8 @@ from tqdm import tqdm
 
 def test_cnn(model_path=None):
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cpu")
     print(device)
 
     final_model = ResNet()
