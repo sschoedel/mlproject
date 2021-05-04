@@ -12,7 +12,7 @@ import torch.optim as optim
 from tqdm import tqdm
 
 
-def train_cnn():
+def train_cnn(gpu=False):
     # set constants
     WORKERS = 0
     EPOCHS = 30
@@ -20,10 +20,17 @@ def train_cnn():
     PRINT_INTERVAL = 100
 
     # train on GPU, if available
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    if gpu:
+        if torch.cuda.is_available():
+            device = torch.device("cuda:0")
+        else: 
+            print('CUDA GPU not found! Moving to CPU...')
+            device = torch.device('cpu')
+    else:
+        device = torch.device("cpu")
 
     # Assuming that we are on a CUDA machine, this should print a CUDA device:
-    print(device)
+    print(f'Training on {device}')
 
     net = ResNet()
     #net = Net()

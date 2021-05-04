@@ -4,14 +4,23 @@ import torch
 from cnn.res_cnn import ResNet
 import numpy as np
 from tqdm import tqdm
+import time
 
+def test_cnn(model_path=None, gpu=False):
 
-def test_cnn(model_path=None):
+    if gpu:
+        if torch.cuda.is_available():
+            device = torch.device("cuda:0")
+        else: 
+            print('CUDA GPU not found! Moving to CPU...')
+            device = torch.device('cpu')
+    else:
+        device = torch.device("cpu")
 
-    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
-    print(device)
-
+    print(f'running on {device}')
+    
+    start_time = time.time()
+    print('Loading pretrained cnn model')
     final_model = ResNet()
     final_model.to(device)
     if model_path is None:
@@ -22,7 +31,7 @@ def test_cnn(model_path=None):
         final_model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
     
     final_model.eval()
-    
+    print(f'Loading model took {time.time() - start_time} seconds.')
 
     # specify hyperparams
     BATCH_SIZE = 4
