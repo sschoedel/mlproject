@@ -13,7 +13,7 @@ This project was validated using Python version 3.9.4 and a Windows operating sy
 pip install -r requirements.txt
 ```
 
-You can choose to install these in an isolated virtual environment as well. 
+In an isolated virtual environment.
 
 We did not test this installation in a conda environment, nor did we validate completely using a different Python version. There are no guarantees that the code will run properly in such environments. 
 
