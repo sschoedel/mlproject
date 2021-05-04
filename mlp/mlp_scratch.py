@@ -161,7 +161,6 @@ class MLP_Scratch:
 	
 		# Compute gradient
 		grad = np.divide((score - labels08), (score * (1 - score)))
-		grad = np.nan_to_num(grad)
 	
 		# grad = np.divide(1, (1-true_scores))
 		# print(f"grad.shape: {grad.shape}")

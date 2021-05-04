@@ -103,7 +103,7 @@ class Test_MLP:
 
 		return score
 
-	def find_optimal_model(self, structures=None, learning_rates=None, save_path='trained_mlp.pt'):
+	def find_optimal_model(self, structures=None, learning_rates=None, save_path='mlp/trained_mlp.pt'):
 		"""
 		Train model on every combination of given structures and lambda values
 		to find the best combination of model architecture and lambda value hyper-parameter.
@@ -152,27 +152,24 @@ class Test_MLP:
 				# cv_score = cross_validate(self.train_data, self.train_labels, num_folds, params)
 	
 				mlp = MLP(structure)
-				train_msg = "Training with structure " + str(i+1) + " of " + str(len(structures)) + " and learning rate " + str(params['lambda_value']) + " (" + str(j+1) + " of " + str(len(learning_rates)) + "."
+				train_msg = "Training with structure " + str(i+1) + " of " + str(len(structures)) + " and learning rate " + str(params['lambda_value']) + " (" + str(j+1) + " of " + str(len(learning_rates)) + ")."
 				score, epoch_used = self.train(mlp, learning_rate=params['lambda_value'], EPOCHS=params['epochs'], message=train_msg)
-
+    
 				# Update params if best score
 				if score > best_score:
 					best_score = score
 					best_params = copy.copy(params)
 					best_params['epochs'] = epoch_used
 		
-				print(f"For structure {i}, learning rate {j}:")
-				print(f"Training time: {time.time() - start_single} seconds.")
-				print(f"Score: {score} at epoch {epoch_used}.\n")
-		
 		print(f"Total time: {time.time() - start_all} seconds.")
-		print(f"Best model with structure {best_params['num_hidden_units']} at {best_params['epochs']} epochs.")
+		print(f"Best model with structure {best_params['num_hidden_layers']} and learning rate {best_params['lambda_value']}.")
   
 		# Train again on best structure and epochs and save model
 		mlp_best = MLP(best_params['num_hidden_layers'])
 		train_msg = "Training with best parameters..."
 		_, _ = self.train(mlp_best, learning_rate=best_params['lambda_value'], EPOCHS=best_params['epochs'], message=train_msg)
 		torch.save(mlp.state_dict(), save_path)
+		print(f"Model trained with best parameters saved to {save_path}")
 
 		self.final_params = best_params
 		return mlp_best
@@ -221,8 +218,6 @@ class Test_MLP:
 		with tqdm(total=EPOCHS*len(trainloader), desc="Training...") as progress_bar:
 			# Run training loop
 			for epoch in range(1,EPOCHS+1):
-				current_loss = 0.0
-				
 				# Iterate over the DataLoader for training data
 				for i, data in enumerate(trainloader, 0):
 					inputs, targets = data
@@ -261,68 +256,55 @@ class Test_MLP:
   
 		# Initialize best results
 		best_test = 0
-		best_epoch = 0
-		print(self.trainloader)
+		best_epoch = 1
+		best_loss = 9999
+		tolerance = 0.1
+		PRINT_INTERVAL=1000
 		with tqdm(total=EPOCHS*len(self.trainloader), desc=message) as progress_bar:
 			# Run training loop
-			for epoch in range(1,EPOCHS+1):
-				current_loss = 0.0
-				
+			for epoch in range(EPOCHS):
 				# Iterate over the DataLoader for training data
 				for i, data in enumerate(self.trainloader, 0):
 					inputs, targets = data
 					optimizer.zero_grad()
 					outputs = mlp(inputs) # Forward pass
 					loss = loss_function(outputs, targets) # Compute loss
-					loss.backward() # Backpropagate errors
+					loss.backward() # Backpropagate errors and update weights
 					optimizer.step()
 							
 					progress_bar.update(1)
 					
-				# Track results for each epoch
-				test_result = self.test_mlp(self.testloader, mlp=mlp)
-				# train_result = test_mlp(self.trainloader, mlp)
-				# results_test.append(test_result)
-				# results_train.append(train_result)
-				# epochs.append(epoch)
-	
-				if test_result > best_test:
-					best_test = test_result
-					best_epoch = epoch
-			
+				# # Track results for each epoch
+				# test_result = self.test_mlp(self.testloader, mlp)
+				# # train_result = self.test_mlp(self.trainloader, mlp)
+				# if test_result > best_test:
+				# 	best_test = test_result
+				# 	best_epoch = epoch
+
 			progress_bar.close()
 
 		return best_test, best_epoch
 
 
-	def test_mlp(self, dataloader, mlp=None, model_name=None):
-		
-		# Load model from file if none are provided
-		if mlp == None:
-			mlp = MLP()
-			mlp.load_state_dict(torch.load(model_name), strict=False)
-			mlp.eval()
+	def test_mlp(self, dataloader, mlp, model_name=None):
+		# # Load model from file if none are provided
+		# if mlp == None:
+		# 	mlp = MLP()
+		# 	mlp.load_state_dict(torch.load(model_name), strict=False)
+		# 	mlp.eval()
 		
 		# Evaluate model on test dataset
-		test_images_truth = np.array(0)
-		predictions = np.array(0)
-		
 		correct = 0
 		total = 0
 		with torch.no_grad():
 			for data in dataloader:
-					images, labels = data
-					outputs = mlp(images)
-					_, predicted = torch.max(outputs.data, 1)
-					predictions = np.append(predictions, predicted)
-					test_images_truth = np.append(test_images_truth, labels)
-					total += labels.size(0)
-					correct += (predicted == labels).sum().item()
+				images, labels = data
+				outputs = mlp(images)
+				_, predicted = torch.max(outputs.data, 1)
+				total += labels.size(0)
+				correct += (predicted == labels).sum().item()
 						
 		test_correct = correct/total
-		
-		test_images_truth.ravel()
-		predictions.ravel()
 		
 		return test_correct
 
@@ -367,4 +349,5 @@ class Test_MLP:
 		test_images_truth.ravel()
 		predictions.ravel()
   
+		print("MLP Report:")
 		print(classification_report(test_images_truth, predictions, digits=3))
