@@ -36,6 +36,7 @@ python main.py -h
     -m  Run only MLP
     -C  Run with train CNN (takes a few hours)
     -M  Run with train MLP (takes a few hours)
+    -G  Run CNN on GPU (use only with NVIDIA GPU with high memory)
 ```
 
 ### Testing
@@ -50,6 +51,12 @@ To train new models, then use the flags `-C` to train a new CNN and `-M` to trai
 
 There is no specific flag to train and test Naive Bayes separately, since it is an algorithm that runs very quickly. For the same reason, there is no pretrained Naive Bayes model saved in this repository. 
 
+### A Note on GPUs
+
+It is commonly known that CNNs run much faster on GPU resources, due to the spatial nature of the layers. However, the CNN used in this project was trained in a Google Colaboratory notebook, which leverages powerful GPU compute resources hosted by Google. These resources are not typically available on consumer GPUs. Thus, by default, the CNN will be trained and tested on the CPU. 
+
+If you choose to use the `-G` flag and train on GPUs, the project team members occasionally ran into the problem of running out of GPU memory. This is because simply loading the trained CNN architecture consumes just over 1GB of GPU memory, and the machine may have other processes consuming GPU memory. If these issues occur when running the models, simply remove the `-G` flag and train on the CPU instead. 
+
 ## Dataset
 
 The dataset used for this project was pulled from the following Git repository:
@@ -63,7 +70,7 @@ This dataset contains thousands of images for 11 different reCAPTCHA classes. Th
 
 ### Paolo Fermin
 
-Paolo was primarily responsible for the design and training of the Convolutional Neural Network. This includes presenting his model during the class presentation, and completing that portion of the final report. In addition, Paolo wrote the README documentation in the repository. 
+Paolo was primarily responsible for the design and training of the Convolutional Neural Network. Most of this was completed in a Google Colaboratory environment. In addition, Paolo presented his model during the class presentation, and completing that portion of the final report. Finally, Paolo wrote the README documentation in the repository. 
 
 ### Nathan Moeliono
 
