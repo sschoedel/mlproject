@@ -149,7 +149,6 @@ class Test_MLP:
 				
 				# Cross validate with given structure and lambda values
 				start_single = time.time()
-				# cv_score = cross_validate(self.train_data, self.train_labels, num_folds, params)
 	
 				mlp = MLP(structure)
 				train_msg = "Training with structure " + str(i+1) + " of " + str(len(structures)) + " and learning rate " + str(params['lambda_value']) + " (" + str(j+1) + " of " + str(len(learning_rates)) + ")."
