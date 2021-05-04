@@ -7,13 +7,11 @@ This repo contains all the code, data, and models necessary to train and test cl
 
 ## Installation
 
-This project was validated using Python version 3.9.4 and a Windows operating system. All of the dependencies necessary for this project are listed in the file `requirements.txt`. To install these dependencies, run the command
+This project was validated using Python version 3.9.4 and a Windows operating system. All of the dependencies necessary for this project are listed in the file `requirements.txt`. To install these dependencies, run the following command in an isolated virtual environment:
 
 ```
 pip install -r requirements.txt
 ```
-
-In an isolated virtual environment.
 
 We did not test this installation in a conda environment, nor did we validate completely using a different Python version. There are no guarantees that the code will run properly in such environments. 
 
