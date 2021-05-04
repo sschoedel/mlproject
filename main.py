@@ -26,7 +26,7 @@ def main(argv):
 
     # read in command args
     try:
-        opts, args = getopt.getopt(argv, "hncmCM")
+        opts, args = getopt.getopt(argv, "ahncmCM")
     except getopt.GetoptError:
       print("python main.py -h for help")
       sys.exit(2)
