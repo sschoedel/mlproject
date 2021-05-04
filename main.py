@@ -23,10 +23,11 @@ def main(argv):
     run_only_mlp_flag = False
     train_cnn_flag = False
     train_mlp_flag = False
+    gpu_flag = False
 
     # read in command args
     try:
-        opts, args = getopt.getopt(argv, "ahncmCM")
+        opts, args = getopt.getopt(argv, "ahncmCMG")
     except getopt.GetoptError:
       print("python main.py -h for help")
       sys.exit(2)
@@ -39,6 +40,7 @@ def main(argv):
             print("    -m\tRun only MLP")
             print("    -C\tRun with train CNN (takes a few hours)")
             print("    -M\tRun with train MLP (takes a few hours)")
+            print("    -G\tRun CNN on GPU (use only with NVIDIA GPU with high memory)")
             sys.exit()
         elif opt == "-C":
             train_cnn_flag = True
@@ -52,22 +54,24 @@ def main(argv):
             run_only_cnn_flag = True
         elif opt == "-m":
             run_only_mlp_flag = True
+        elif opt == "-G":
+            gpu_flag = True
     
     # run specified models
     if run_all_flag:
         run_naive_bayes()
         run_mlp(train_mlp_flag)
-        run_cnn(train_cnn_flag)
+        run_cnn(train_cnn_flag, gpu_flag)
     elif run_only_naive_bayes_flag:
         run_naive_bayes()
     elif run_only_mlp_flag:
         run_mlp(train_mlp_flag)
     elif run_only_cnn_flag:
-        run_cnn(train_cnn_flag)
+        run_cnn(train_cnn_flag, gpu_flag)
     else:   
         run_naive_bayes()
         run_mlp(train_mlp_flag)
-        run_cnn(train_cnn_flag)
+        run_cnn(train_cnn_flag, gpu_flag)
 
 def run_naive_bayes():
     print("======= Running Naive Bayes ========")
@@ -120,19 +124,19 @@ def run_mlp(train_mlp_flag):
         print("-- Begin testing with pre-trained MLP model --")
         mlp.print_classification_report(model_path="mlp/final_trained_mlp.pt")
 
-def run_cnn(train_cnn_flag):  
+def run_cnn(train_cnn_flag, gpu_flag):  
     print("======= Running CNN ========")
     if train_cnn_flag:
         # train and test a new model
         print("-- Begin training CNN --")
-        cnn_path = train_cnn()
+        cnn_path = train_cnn(gpu=gpu_flag)
 
         print("-- Begin testing CNN--")
-        labels, predictions = test_cnn(model_path=cnn_path)
+        labels, predictions = test_cnn(model_path=cnn_path, gpu=gpu_flag)
     else:
         print("-- Begin testing with pre-trained CNN model --")
         # if training was not run, use the default model
-        labels, predictions = test_cnn()    
+        labels, predictions = test_cnn(gpu=gpu_flag)    
     
     # Output results of CNN
     print("CNN Report:")

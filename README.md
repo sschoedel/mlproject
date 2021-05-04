@@ -61,6 +61,10 @@ This dataset contains thousands of images for 11 different reCAPTCHA classes. Th
 
 ## Contributing
 
+### Nathan Moeliono
+
+Nathan was primarily responsible for the design and training of the Naive Bayes algorithm. This includes presenting his model during the class presentation, and completing that portion of the final report. In addition, Nathan designed and structured the final presentation. 
+
 ### Paolo Fermin
 
 Paolo was primarily responsible for the design and training of the Convolutional Neural Network. This includes presenting his model during the class presentation, and completing that portion of the final report. In addition, Paolo wrote the README documentation in the repository. 
