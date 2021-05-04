@@ -71,4 +71,4 @@ Paolo was primarily responsible for the design and training of the Convolutional
 
 ### Sam Schoedel
 
-Sam was responsible for designing and training the multi-layer perceptron as well as laying out and editing the report. Responsibilities included presenting MLP results in the class presentation and writing the MLP portion of the report as well as summarizing the results in the conclusion.
+Sam was responsible for designing and training the multi-layer perceptron as well as laying out and editing the report. Responsibilities also included presenting MLP results in the class presentation and writing the MLP portion of the report as well as summarizing the results in the conclusion.
